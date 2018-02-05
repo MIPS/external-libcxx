@@ -57,6 +57,7 @@ class Configuration(libcxx.test.config.Configuration):
 
         arch = self.get_lit_conf('arch')
         api = int(self.get_lit_conf('api'))
+        abi = self.get_lit_conf('abi')
 
         sysroot = os.path.join(os.environ['NDK'], 'sysroot')
         self.cxx.compile_flags.extend(['--sysroot', sysroot])
@@ -76,6 +77,18 @@ class Configuration(libcxx.test.config.Configuration):
                 '-mfpu=vfpv3-d16',
                 '-mthumb',
             ])
+
+        if arch == 'mips':
+            if abi == 'mips32r6':
+                self.cxx.flags.extend([
+                    '-mips32r6',
+                    '-mno-odd-spreg',
+                    '-mfp64',
+                ])
+            else:
+                self.cxx.flags.extend([
+                    '-mfpxx',
+                ])
 
         if api < 21:
             android_support_headers = os.path.join(
